@@ -1,3 +1,7 @@
+### NAME: DINESH R
+
+### REG NO: 24900440
+
 # Uploading temperature sensor data in Thing Speak cloud
 
 # AIM:
@@ -42,7 +46,7 @@ Step7 Check your ThingSpeak channel to verify that the sensor value has been upd
 
 Internet of Things (IoT) describes an emerging trend where a large number of embedded devices (things) are connected to the Internet. These connected devices communicate with people and other things and often provide sensor data to cloud storage and cloud computing resources where the data is processed and analyzed to gain important insights. Cheap cloud computing power and increased device connectivity is enabling this trend.IoT solutions are built for many vertical applications such as environmental monitoring and control, health monitoring, vehicle fleet monitoring, industrial monitoring and control, and home automation
 
-![image](https://user-images.githubusercontent.com/71547910/235334044-c01d4261-d46f-4f62-b07f-72a7b6fce5d5.png)
+<img src="https://user-images.githubusercontent.com/71547910/235334044-c01d4261-d46f-4f62-b07f-72a7b6fce5d5.png" width="600">
 
 ### Sending Data to Cloud with ESP32 and ThingSpeak
 
@@ -71,10 +75,76 @@ Automatically act on your data and communicate using third-party services like T
 
 
 # PROGRAM:
+```
+#include "ThingSpeak.h"
+#include <WiFi.h>
+#include "DHT.h"
+
+
+char ssid[] = "Dinesh";
+char pass[] = "monkeyDluffy";
+
+const int out = 23;
+long T;
+float temperature = 0;
+WiFiClient client;
+DHT dht(23, DHT11);
+
+unsigned long myChannelField = 2785416;
+const int TemperatureField = 1;
+const int HumidityField = 2;
+
+const char* myWriteAPIKey = "R7LNAVHQE1W3T0FA";
+
+void setup()
+{
+  Serial.begin(115200);
+  pinMode(out, INPUT);
+  ThingSpeak.begin(client);
+  dht.begin();
+  delay(1000);
+}
+
+void loop()
+{
+  if (WiFi.status() != WL_CONNECTED)
+  {
+    Serial.print("Attempting to connect to SSID: ");
+    Serial.println(ssid);
+    while (WiFi.status() != WL_CONNECTED)
+    {
+      WiFi.begin(ssid,pass);
+      Serial.print(".");
+      delay(5000);
+    }
+    Serial.println("\nConnected.");
+  }
+  float temperature = dht.readTemperature();
+  float humidity = dht.readHumidity();
+
+  Serial.print("Temperature: ");
+  Serial.println(temperature);
+  Serial.println(" °C");
+
+  Serial.print("Humidity: ");
+  Serial.println(humidity);
+  Serial.println(" g.m-3");
+
+  ThingSpeak.writeField(myChannelField, TemperatureField, temperature, myWriteAPIKey);
+  ThingSpeak.writeField(myChannelField, HumidityField, humidity, myWriteAPIKey);
+  delay(100);
+}
+```
 
 # CIRCUIT DIAGRAM:
 
+<img src="https://github.com/user-attachments/assets/b2f0b56f-6676-4f1c-b9aa-1b9223729be1" width="600">
+
 # OUTPUT:
+
+<img src="https://github.com/user-attachments/assets/4c4910b8-31ea-4453-826b-6903136a2949" width="600">
+
+<img src="https://github.com/user-attachments/assets/74da684b-4abd-44fb-bc80-954572d19971" width="600">
 
 # RESULT:
 
